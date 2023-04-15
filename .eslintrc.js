@@ -5,10 +5,13 @@ module.exports = {
   },
   extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
   overrides: [],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  plugins: ['react'],
-  rules: {}
+  plugins: ['react', '@typescript-eslint'],
+  rules: {
+    '@typescript-eslint/no-explicit-any': 'error'
+  }
 }
