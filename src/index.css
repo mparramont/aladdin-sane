@@ -267,10 +267,6 @@ i {
   margin: 0;
 }
 
-#album h1 + p + p {
-  white-space: break-spaces;
-}
-
 #album h1:focus {
   outline: none;
   color: hsl(224, 98%, 58%);

@@ -21,6 +21,9 @@ module.exports = {
   plugins: ['react', '@typescript-eslint'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
-    'no-console': ['error', { allow: ['error'] }]
+    '@typescript-eslint/no-use-before-define': 'off',
+    'no-console': ['error', { allow: ['error'] }],
+    'no-alert': 'off',
+    'import/prefer-default-export': 'off'
   }
 }
