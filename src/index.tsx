@@ -1,25 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import ErrorPage from './error-page'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
-import Album from './routes/album'
-import Root from './routes/root'
+import { routes } from './routes'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: '/albums/:albumId',
-        element: <Album />
-      }
-    ]
-  }
-])
+const router = createBrowserRouter(routes)
 
 // @ts-ignore TODO fix later
 ReactDOM.createRoot(document.getElementById('root')).render(
