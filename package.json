@@ -21,7 +21,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint . --fix --max-warnings=0",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -51,7 +52,13 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
     "prettier": "2.8.7",
     "typescript": "^4.9.5"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.--write": "prettier --write"
   }
 }
