@@ -4,7 +4,7 @@ interface Album {
   favorite?: boolean
 
   // Last.fm properties
-  artist: string
+  artist: Artist
   mbid: string
   tags: {
     tag: {

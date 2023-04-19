@@ -26,17 +26,7 @@ export default function Album() {
         </h1>
 
         {/* TODO link to artist */}
-        {album.artist && (
-          <p>
-            {/* <a
-              target="_blank"
-              href={`https://twitter.com/${album.artist}`}
-              rel="noreferrer"
-            > */}
-            {album.artist}
-            {/* </a> */}
-          </p>
-        )}
+        {album.artist && <p>{album.artist.name}</p>}
 
         {album.wiki?.summary && (
           <AlbumSummary>{album.wiki.summary}</AlbumSummary>

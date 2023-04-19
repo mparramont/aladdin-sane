@@ -6,11 +6,30 @@ import sortBy from 'sort-by'
 
 export async function getAlbums(query?: string) {
   await fakeNetwork(`getAlbums:${query ?? ''}`)
-  let albums = (await localforage.getItem<Album[]>('albums')) ?? []
-  if (query) {
-    albums = matchSorter(albums, query, { keys: ['first', 'last'] })
-  }
-  return albums.sort(sortBy('-last', 'createdAt'))
+
+  // Use fetch to make an HTTP request to the Last.fm API
+  const response = await fetch(
+    'http://ws.audioscrobbler.com/2.0/' +
+      '?method=artist.gettopalbums' +
+      '&artist=David Bowie' +
+      '&api_key=035db7391c866de91ad8767bbb32c4f7' +
+      '&format=json'
+  )
+
+  const data = await response.json()
+
+  const albums = data.topalbums.album.map((album: Album) => ({
+    id: album.mbid || `${album.artist.name}-${album.name}}`,
+    name: album.name,
+    artist: album.artist,
+    createdAt: Date.now()
+  }))
+
+  const sortedAlbums = query
+    ? matchSorter(albums, query, { keys: ['first', 'last'] })
+    : albums
+
+  return sortedAlbums.sort(sortBy('-last', 'createdAt'))
 }
 
 export async function createAlbum() {

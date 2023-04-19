@@ -1,5 +1,5 @@
 export const davidBowie1969Album: Album = {
-  artist: 'David Bowie',
+  artist: { name: 'David Bowie' },
   mbid: '',
   tags: {
     tag: [

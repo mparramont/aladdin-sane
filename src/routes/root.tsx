@@ -1,6 +1,18 @@
-import { Link, Outlet } from 'react-router-dom'
+import type { LoaderFunction } from 'react-router-dom'
+import { Link, Outlet, useLoaderData } from 'react-router-dom'
+import { getAlbums } from '../albums'
+import { LoaderData } from '../types/react-router-extra-types'
+
+// change this to use funtion:
+export const loader = (async () => {
+  const albums = await getAlbums()
+  return { albums }
+}) satisfies LoaderFunction
 
 export default function Root() {
+  const { albums }: { albums: Album[] } = useLoaderData() as LoaderData<
+    typeof loader
+  >
   return (
     <>
       <div id="sidebar">
@@ -22,14 +34,22 @@ export default function Root() {
           </form>
         </div>
         <nav>
-          <ul>
-            <li>
-              <Link to="/albums/1">David Bowie (1969)</Link>
-            </li>
-            {/* <li>
-              <Link to="/albums/2">The Man Who Sold the World</Link>
-            </li> */}
-          </ul>
+          {albums.length ? (
+            <ul>
+              {albums.map((album) => (
+                <li key={album.id}>
+                  <Link to={`albums/${album.id}`}>
+                    {album.name ? album.name : <i>No Name</i>}{' '}
+                    {album.favorite && <span>★</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              <i>No albums</i>
+            </p>
+          )}
         </nav>
       </div>
       <div id="detail">
