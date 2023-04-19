@@ -9,7 +9,7 @@ export async function getAlbums(query?: string) {
 
   // Use fetch to make an HTTP request to the Last.fm API
   const response = await fetch(
-    'http://ws.audioscrobbler.com/2.0/' +
+    'https://ws.audioscrobbler.com/2.0/' +
       '?method=artist.gettopalbums' +
       '&artist=David Bowie' +
       '&api_key=035db7391c866de91ad8767bbb32c4f7' +
