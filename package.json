@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@playwright/test": "^1.32.3",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.23",
     "@types/react": "^18.0.35",
@@ -23,7 +21,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "testComment": "to use `yarn test`, run `yarn start` in another terminal first",
+    "test": "npx playwright test",
     "eject": "react-scripts eject",
     "lint": "eslint . --fix --max-warnings=0",
     "format": "prettier . --write",
@@ -62,6 +61,8 @@
     "eslint-plugin-react": "^7.32.2",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.1",
+    "playwright": "^1.16.2",
+    "playwright-chromium": "^1.16.2",
     "prettier": "2.8.7",
     "typescript": "^4.9.5"
   },
