@@ -21,9 +21,10 @@ export default function Album() {
       </div>
 
       <div>
-        <h1>
-          {album.name || <i>No Album Name</i>} <Favorite album={album} />
-        </h1>
+        <TitleWrapper>
+          <AlbumName>{album.name || <i>No Album Name</i>}</AlbumName>
+          <Favorite album={album} />
+        </TitleWrapper>
 
         {/* TODO link to artist */}
         {album.artist && <p>{album.artist.name}</p>}
@@ -71,6 +72,15 @@ function Favorite({ album }: { album: Album }) {
     </Form>
   )
 }
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+`
+
+const AlbumName = styled.h1`
+  flex-grow: 1;
+`
 
 const AlbumSummary = styled.p`
   display: -webkit-box;
