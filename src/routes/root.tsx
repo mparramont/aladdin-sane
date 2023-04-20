@@ -1,13 +1,17 @@
 import type { LoaderFunction } from 'react-router-dom'
-import { Link, Outlet, useLoaderData } from 'react-router-dom'
-import { getAlbums } from '../albums'
+import { Link, Outlet, useLoaderData, Form } from 'react-router-dom'
+import { getAlbums, createAlbum } from '../albums'
 import { LoaderData } from '../types/react-router-extra-types'
 
-// change this to use funtion:
 export const loader = (async () => {
   const albums = await getAlbums()
   return { albums }
 }) satisfies LoaderFunction
+
+export async function action() {
+  const album = await createAlbum()
+  return { album }
+}
 
 export default function Root() {
   const { albums }: { albums: Album[] } = useLoaderData() as LoaderData<
@@ -29,9 +33,9 @@ export default function Root() {
             <div id="search-spinner" aria-hidden hidden />
             <div className="sr-only" aria-live="polite" />
           </form>
-          <form method="post">
+          <Form method="post">
             <button type="submit">New</button>
-          </form>
+          </Form>
         </div>
         <nav>
           {albums.length ? (

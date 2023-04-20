@@ -5,8 +5,23 @@ import { matchSorter } from 'match-sorter'
 import sortBy from 'sort-by'
 
 export async function getAlbums(query?: string) {
-  await fakeNetwork(`getAlbums:${query ?? ''}`)
+  const albums = await Promise.all([
+    getAlbumsFromLocalStorage(),
+    getAlbumsFromLastFM()
+  ]).then((arrays) => arrays.flat())
 
+  const matchedAlbums = query
+    ? matchSorter(albums, query, { keys: ['first', 'last'] })
+    : albums
+
+  return matchedAlbums.sort(sortBy('-last', 'createdAt'))
+}
+
+async function getAlbumsFromLocalStorage() {
+  return (await localforage.getItem<Album[]>('albums')) ?? []
+}
+
+export async function getAlbumsFromLastFM() {
   // Use fetch to make an HTTP request to the Last.fm API
   const response = await fetch(
     'https://ws.audioscrobbler.com/2.0/' +
@@ -18,18 +33,12 @@ export async function getAlbums(query?: string) {
 
   const data = await response.json()
 
-  const albums = data.topalbums.album.map((album: Album) => ({
+  return data.topalbums.album.map((album: Album) => ({
     id: album.mbid || `${album.artist.name}-${album.name}`,
     name: album.name,
     artist: album.artist,
     createdAt: Date.now()
   }))
-
-  const sortedAlbums = query
-    ? matchSorter(albums, query, { keys: ['first', 'last'] })
-    : albums
-
-  return sortedAlbums.sort(sortBy('-last', 'createdAt'))
 }
 
 export async function createAlbum() {
