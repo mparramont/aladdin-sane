@@ -19,7 +19,7 @@ export async function getAlbums(query?: string) {
   const data = await response.json()
 
   const albums = data.topalbums.album.map((album: Album) => ({
-    id: album.mbid || `${album.artist.name}-${album.name}}`,
+    id: album.mbid || `${album.artist.name}-${album.name}`,
     name: album.name,
     artist: album.artist,
     createdAt: Date.now()
