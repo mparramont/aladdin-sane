@@ -38,7 +38,7 @@ export default function Root() {
             <ul>
               {albums.map((album) => (
                 <li key={album.id}>
-                  <Link to={`albums/${album.id}`}>
+                  <Link to={`albums/${encodeURIComponent(album.id)}`}>
                     {album.name ? album.name : <i>No Name</i>}{' '}
                     {album.favorite && <span>★</span>}
                   </Link>

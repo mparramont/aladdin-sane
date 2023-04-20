@@ -1,6 +1,6 @@
 interface Album {
   // webapp properties
-  id?: string
+  id: string
   favorite?: boolean
 
   // Last.fm properties
