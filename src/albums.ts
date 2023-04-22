@@ -42,7 +42,6 @@ export async function getAlbumsFromLastFM() {
 }
 
 export async function createAlbum() {
-  await fakeNetwork()
   const id = Math.random().toString(36).substring(2, 9)
   const album = { id, createdAt: Date.now() }
   const albums = (await getAlbums()) as Album[]
@@ -53,14 +52,12 @@ export async function createAlbum() {
 }
 
 export async function getAlbum(id: string) {
-  await fakeNetwork(`album:${id}`)
   const albums = await localforage.getItem<Album[]>('albums')
   const album = albums?.find((albumToFind) => albumToFind.id === id)
   return album ?? null
 }
 
 export async function updateAlbum(id: string, updates: Partial<Album>) {
-  await fakeNetwork()
   const albums = await localforage.getItem<Album[]>('albums')
   if (!albums) throw new Error('No albums found')
   const albumIndex = albums.findIndex((album) => album.id === id)
@@ -80,29 +77,6 @@ export async function deleteAlbum(id: string) {
   albums.splice(index, 1)
   await set(albums)
   return true
-}
-
-interface FakeCache {
-  [key: string]: boolean
-}
-
-let fakeCache: FakeCache = {}
-
-async function fakeNetwork(key?: string) {
-  if (!key) {
-    fakeCache = {}
-  }
-
-  if (key && fakeCache[key]) {
-    return
-  }
-
-  if (key) {
-    fakeCache[key] = true
-  }
-  await new Promise((res) => {
-    setTimeout(res, Math.random() * 800)
-  })
 }
 
 function set(albums: Album[]) {
