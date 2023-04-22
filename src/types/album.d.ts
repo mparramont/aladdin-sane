@@ -1,9 +1,12 @@
-interface Album {
-  // webapp properties
-  id: string
+interface Album extends LastFMAlbum {
+  id: AlbumID
   favorite?: boolean
+  createdAt: number
+}
 
-  // Last.fm properties
+type AlbumID = string
+
+interface LastFMAlbum {
   artist: Artist
   mbid: string
   tags: {
@@ -13,10 +16,7 @@ interface Album {
     }[]
   }
   name: string
-  image: {
-    size: string
-    '#text': string
-  }[]
+  image: AlbumImage[]
   tracks: {
     track: {
       name: string
@@ -44,4 +44,9 @@ interface Album {
     summary: string
     content: string
   }
+}
+
+type LastFMAlbumImage = {
+  size: string
+  '#text': string
 }

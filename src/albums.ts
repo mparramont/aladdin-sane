@@ -3,6 +3,10 @@
 import localforage from 'localforage'
 import { matchSorter } from 'match-sorter'
 import sortBy from 'sort-by'
+import uniqBy from 'lodash.uniqby'
+
+// TODO this is a hack so that we can later split on it. We should instead find a way to pass around the artist and album name separately.
+export const separatorForAlbumID = '~|~'
 
 export async function getAlbums(query?: string) {
   const albums = await Promise.all([
@@ -22,7 +26,7 @@ async function getAlbumsFromLocalStorage() {
 }
 
 export async function getAlbumsFromLastFM() {
-  // Use fetch to make an HTTP request to the Last.fm API
+  // get the top albums of David Bowie using the the Last.fm Scrobbler API
   const response = await fetch(
     'https://ws.audioscrobbler.com/2.0/' +
       '?method=artist.gettopalbums' +
@@ -32,15 +36,29 @@ export async function getAlbumsFromLastFM() {
   )
 
   const data = await response.json()
-
-  return data.topalbums.album.map((album: Album) => ({
-    id: album.mbid || `${album.artist.name}-${album.name}`,
-    name: album.name,
-    artist: album.artist,
-    createdAt: Date.now()
-  }))
+  const topAlbums = data.topalbums.album
+  const uniqueTopAlbums = uniqBy(
+    topAlbums,
+    (album: LastFMAlbum) => album.mbid || `${album.artist.name}-${album.name}`
+  )
+  return uniqueTopAlbums.map((album: LastFMAlbum) =>
+    buildAlbumFromLastFMAlbum(album)
+  )
 }
 
+function buildAlbumFromLastFMAlbum(lastFMAlbum: LastFMAlbum): Album {
+  // TODO rename this to slug
+  const id = encodeURIComponent(
+    `${lastFMAlbum.artist.name}${separatorForAlbumID}${lastFMAlbum.name}`
+  )
+  return {
+    id,
+    createdAt: Date.now(), // TODO fix, this will be changed on every refresh
+    ...lastFMAlbum
+  }
+}
+
+// TODO maybe it would make sense to differentiate between albums and albumsFromLastFM by calling Album LocalAlbum?
 export async function createAlbum() {
   const id = Math.random().toString(36).substring(2, 9)
   const album = { id, createdAt: Date.now() }
@@ -52,9 +70,29 @@ export async function createAlbum() {
 }
 
 export async function getAlbum(id: string) {
+  return (await getAlbumFromLocalStorage(id)) || (await getAlbumFromLastFM(id))
+}
+
+async function getAlbumFromLocalStorage(id: string) {
   const albums = await localforage.getItem<Album[]>('albums')
   const album = albums?.find((albumToFind) => albumToFind.id === id)
   return album ?? null
+}
+
+async function getAlbumFromLastFM(id: string) {
+  // get an album using the the Last.fm Scrobbler API
+  const [artistName, albumName] = id.split(separatorForAlbumID)
+  const response = await fetch(
+    'https://ws.audioscrobbler.com/2.0/' +
+      '?method=album.getInfo' +
+      `&artist=${encodeURIComponent(artistName)}` +
+      `&album=${encodeURIComponent(albumName)}` +
+      '&api_key=035db7391c866de91ad8767bbb32c4f7' +
+      '&format=json'
+  )
+
+  const { album } = (await response.json()) || {}
+  return album && buildAlbumFromLastFMAlbum(album)
 }
 
 export async function updateAlbum(id: string, updates: Partial<Album>) {

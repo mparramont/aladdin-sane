@@ -1,5 +1,7 @@
+import { separatorForAlbumID } from '../../albums'
+
 export const davidBowie1969Album: Album = {
-  id: 'davidBowie1969Album',
+  id: `David+Bowie${separatorForAlbumID}David+Bowie+1969`,
   artist: { name: 'David Bowie' },
   mbid: '',
   tags: {
@@ -223,5 +225,6 @@ export const davidBowie1969Album: Album = {
     summary:
       'David Bowie (commonly known as Space Oddity) is the second studio album by the English musician David Bowie, originally released in the United Kingdom on 14 November 1969 through Mercury affiliate Philips Records.',
     content: 'TODO fill'
-  }
+  },
+  createdAt: new Date(1969, 11, 4).getTime()
 }

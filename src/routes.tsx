@@ -1,7 +1,7 @@
 import ErrorPage from './error-page'
 import './index.css'
-import Album from './routes/album'
-import Root, { loader as rootLoader, action as rootAction } from './routes/root'
+import Album, { loader as albumLoader } from './routes/album'
+import Root, { action as rootAction, loader as rootLoader } from './routes/root'
 
 export const routes = [
   {
@@ -13,7 +13,8 @@ export const routes = [
     children: [
       {
         path: '/albums/:albumId',
-        element: <Album />
+        element: <Album />,
+        loader: albumLoader
       }
     ]
   }

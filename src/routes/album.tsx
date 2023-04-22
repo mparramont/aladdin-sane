@@ -1,14 +1,31 @@
-import { Form } from 'react-router-dom'
+import type { LoaderFunction, Params } from 'react-router-dom'
+import { Form, useLoaderData } from 'react-router-dom'
 import styled from 'styled-components'
-import { davidBowie1969Album } from '../data/albums/davidBowie1969Album'
+import { getAlbum } from '../albums'
+import { LoaderData } from '../types/react-router-extra-types'
+
+export const loader: LoaderFunction = async ({
+  params
+}: {
+  params: Params
+}) => {
+  const albumId = params.albumId as AlbumID
+  const album = await getAlbum(albumId)
+  return { album }
+}
 
 export default function Album() {
-  const album = davidBowie1969Album
+  const { album } = useLoaderData() as LoaderData<typeof loader>
 
-  // TODO extract to function
-  const albumImageURL =
-    album.image.find((image) => image.size === 'extralarge')?.['#text'] ||
-    album.image[album.image.length - 1]?.['#text']
+  function getAlbumImageURL() {
+    if (!album.image) return undefined
+    return (
+      album.image.find(
+        (image: LastFMAlbumImage) => image.size === 'extralarge'
+      )?.['#text'] || album.image[album.image.length - 1]?.['#text']
+    )
+  }
+  const albumImageURL = getAlbumImageURL()
 
   return (
     <div id="album">
