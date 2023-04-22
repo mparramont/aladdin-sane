@@ -16,26 +16,9 @@ interface LastFMAlbum {
     }[]
   }
   name: string
-  image: AlbumImage[]
+  image: LastFMImage[]
   tracks: {
-    track: {
-      name: string
-      duration: number | null
-      artist: {
-        url: string
-        name: string
-        mbid: MBID
-      }
-      streamable: {
-        fulltrack: string
-        '#text': string
-      }
-      url: string
-      '@attr': {
-        rank: number
-      }
-      mbid?: string
-    }[]
+    track: LastFMTrack[]
   }
   listeners: string | number
   playcount: string | number
@@ -46,7 +29,26 @@ interface LastFMAlbum {
   }
 }
 
-type LastFMAlbumImage = {
+type LastFMTrack = {
+  name: string
+  duration: number | null
+  artist: {
+    url: string
+    name: string
+    mbid: MBID
+  }
+  streamable: {
+    fulltrack: string
+    '#text': string
+  }
+  url: string
+  '@attr': {
+    rank: number
+  }
+  mbid?: string
+}
+
+type LastFMImage = {
   size: string
   '#text': string
 }

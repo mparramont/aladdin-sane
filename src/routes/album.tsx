@@ -1,3 +1,4 @@
+import { MusicNote } from '@mui/icons-material'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import {
@@ -7,6 +8,10 @@ import {
   CardContent,
   CardMedia,
   IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Stack,
   Typography
 } from '@mui/material'
@@ -30,13 +35,14 @@ export default function Album() {
   function getAlbumImageURL() {
     if (!album.image) return undefined
     return (
-      album.image.find(
-        (image: LastFMAlbumImage) => image.size === 'extralarge'
-      )?.['#text'] || album.image[album.image.length - 1]?.['#text']
+      album.image.find((image: LastFMImage) => image.size === 'extralarge')?.[
+        '#text'
+      ] || album.image[album.image.length - 1]?.['#text']
     )
   }
   const albumImageURL = getAlbumImageURL()
 
+  // Inside the component
   return (
     <Card id="album" sx={{ maxWidth: { xs: '100%', md: '50%' } }}>
       <CardMedia
@@ -75,6 +81,19 @@ export default function Album() {
           >
             {album.wiki.summary}
           </Typography>
+        )}
+
+        {album.tracks && (
+          <List>
+            {album.tracks.track.map((track: LastFMTrack, index: number) => (
+              <ListItem key={track.mbid || track.name}>
+                <ListItemIcon>
+                  <MusicNote />
+                </ListItemIcon>
+                <ListItemText primary={`${index + 1}. ${track.name}`} />
+              </ListItem>
+            ))}
+          </List>
         )}
 
         <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
