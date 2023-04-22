@@ -8,14 +8,14 @@ import uniqBy from 'lodash.uniqby'
 // TODO this is a hack so that we can later split on it. We should instead find a way to pass around the artist and album name separately.
 export const separatorForAlbumID = '~|~'
 
-export async function getAlbums(query?: string) {
+export async function getAlbums(query?: string | null) {
   const albums = await Promise.all([
     getAlbumsFromLocalStorage(),
     getAlbumsFromLastFM()
   ]).then((arrays) => arrays.flat())
 
   const matchedAlbums = query
-    ? matchSorter(albums, query, { keys: ['first', 'last'] })
+    ? matchSorter(albums, query, { keys: ['name'] })
     : albums
 
   return matchedAlbums.sort(sortBy('-last', 'createdAt'))

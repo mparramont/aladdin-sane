@@ -14,12 +14,15 @@ import {
 } from '@mui/material'
 import type { LoaderFunction } from 'react-router-dom'
 import { Form, Link, Outlet, useLoaderData } from 'react-router-dom'
+import { useEffect } from 'react'
 import { createAlbum, getAlbums } from '../albums'
 import { LoaderData } from '../types/react-router-extra-types'
 
-export const loader = (async () => {
-  const albums = await getAlbums()
-  return { albums }
+export const loader = (async ({ request }) => {
+  const url = new URL(request.url)
+  const q = url.searchParams.get('q')
+  const albums = await getAlbums(q)
+  return { albums, q }
 }) satisfies LoaderFunction
 
 export async function action() {
@@ -28,10 +31,15 @@ export async function action() {
 }
 
 export default function Root() {
-  const { albums }: { albums: Album[] } = useLoaderData() as LoaderData<
-    typeof loader
-  >
   const theme = useTheme()
+  const { albums, q }: { albums: Album[]; q: string | null } =
+    useLoaderData() as LoaderData<typeof loader>
+
+  useEffect(() => {
+    // to fix, whenclicking back after a search, that the form field still haves the value the user entered even though the list is no longer filtered.
+    // @ts-ignore TODO fix
+    document.getElementById('q').value = q
+  }, [q])
   return (
     <Container
       maxWidth="xl"
@@ -42,20 +50,21 @@ export default function Root() {
           <Paper sx={{ p: 2 }}>
             <Typography variant="h4">Celebrate David Bowie!</Typography>
             <Stack spacing={2}>
-              <form id="search-form" role="search">
+              <Form id="search-form" role="search">
                 <TextField
                   id="q"
                   aria-label="Search albums"
                   placeholder="Search"
                   type="search"
                   name="q"
+                  defaultValue={q}
                   fullWidth
                 />
                 <div id="search-spinner" aria-hidden hidden>
                   <CircularProgress />
                 </div>
                 <div className="sr-only" aria-live="polite" />
-              </form>
+              </Form>
               <Form method="post">
                 <Button type="submit" variant="contained" color="primary">
                   New
