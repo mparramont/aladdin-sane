@@ -96,27 +96,31 @@ export default function Album() {
           </List>
         )}
 
-        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-          <Form action="edit">
-            <Button type="submit" variant="outlined">
-              Edit
-            </Button>
-          </Form>
-          <Form
-            method="post"
-            action="destroy"
-            onSubmit={(event) => {
-              // eslint-disable-next-line no-restricted-globals
-              if (!confirm('Please confirm you want to delete this record.')) {
-                event.preventDefault()
-              }
-            }}
-          >
-            <Button type="submit" variant="outlined" color="error">
-              Delete
-            </Button>
-          </Form>
-        </Stack>
+        <Box hidden={album.fromLastFM}>
+          <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+            <Form action="edit">
+              <Button type="submit" variant="outlined">
+                Edit
+              </Button>
+            </Form>
+            <Form
+              method="post"
+              action="destroy"
+              onSubmit={(event) => {
+                if (
+                  // eslint-disable-next-line no-restricted-globals
+                  !confirm('Please confirm you want to delete this record.')
+                ) {
+                  event.preventDefault()
+                }
+              }}
+            >
+              <Button type="submit" variant="outlined" color="error">
+                Delete
+              </Button>
+            </Form>
+          </Stack>
+        </Box>
       </CardContent>
     </Card>
   )

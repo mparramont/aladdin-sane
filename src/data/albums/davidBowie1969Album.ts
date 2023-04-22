@@ -1,6 +1,7 @@
 import { separatorForAlbumID } from '../../albums'
 
 export const davidBowie1969Album: Album = {
+  fromLastFM: true,
   id: `David+Bowie${separatorForAlbumID}David+Bowie+1969`,
   artist: { name: 'David Bowie' },
   mbid: '',

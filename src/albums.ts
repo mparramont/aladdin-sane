@@ -54,7 +54,8 @@ function buildAlbumFromLastFMAlbum(lastFMAlbum: LastFMAlbum): Album {
   return {
     id,
     createdAt: Date.now(), // TODO fix, this will be changed on every refresh
-    ...lastFMAlbum
+    ...lastFMAlbum,
+    fromLastFM: true
   }
 }
 

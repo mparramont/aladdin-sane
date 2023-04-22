@@ -7,6 +7,7 @@ interface Album extends LastFMAlbum {
 type AlbumID = string
 
 interface LastFMAlbum {
+  fromLastFM: true
   artist: Artist
   mbid: string
   tags: {
