@@ -9,7 +9,8 @@ import {
   Paper,
   Stack,
   TextField,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import type { LoaderFunction } from 'react-router-dom'
 import { Form, Link, Outlet, useLoaderData } from 'react-router-dom'
@@ -30,6 +31,7 @@ export default function Root() {
   const { albums }: { albums: Album[] } = useLoaderData() as LoaderData<
     typeof loader
   >
+  const theme = useTheme()
   return (
     <Container
       maxWidth="xl"
@@ -68,6 +70,10 @@ export default function Root() {
                       key={album.id}
                       component={Link}
                       to={`albums/${album.id}`}
+                      sx={{
+                        textDecoration: 'none',
+                        color: theme.palette.primary.main
+                      }}
                     >
                       <ListItemText
                         primary={album.name ? album.name : <i>No Name</i>}
