@@ -82,7 +82,9 @@ export default function Root() {
           </Paper>
         </Grid>
         <Grid item xs={12} sm={8} md={9}>
-          <Outlet />
+          <Container>
+            <Outlet />
+          </Container>
         </Grid>
       </Grid>
     </Container>

@@ -1,7 +1,16 @@
-import type { LoaderFunction, Params } from 'react-router-dom'
-import { Form, useLoaderData } from 'react-router-dom'
-import styled from '@emotion/styled'
-import { Box, Typography } from '@mui/material'
+import StarIcon from '@mui/icons-material/Star'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material'
+import { Form, LoaderFunction, Params, useLoaderData } from 'react-router-dom'
 import { getAlbum } from '../albums'
 import { LoaderData } from '../types/react-router-extra-types'
 
@@ -29,48 +38,68 @@ export default function Album() {
   const albumImageURL = getAlbumImageURL()
 
   return (
-    <div id="album">
-      <div>
-        <img
-          key={albumImageURL}
-          src={albumImageURL}
-          alt={(album.name && `${`${album.name} cover`}`) || 'No Album Name'}
-        />
-      </div>
+    <Card id="album" sx={{ maxWidth: { xs: '100%', md: '50%' } }}>
+      <CardMedia
+        component="img"
+        image={albumImageURL}
+        alt={(album.name && `${album.name} cover`) || 'No Album Name'}
+      />
 
-      <div>
-        <TitleWrapper>
-          <AlbumName>{album.name || <i>No Album Name</i>}</AlbumName>
+      <CardContent>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Typography variant="h5" component="div">
+            {album.name || <i>No Album Name</i>}
+          </Typography>
           <Favorite album={album} />
-        </TitleWrapper>
+        </Box>
 
         {/* TODO link to artist */}
-        {album.artist && <p>{album.artist.name}</p>}
+        {album.artist && <Typography>{album.artist.name}</Typography>}
 
         {album.wiki?.summary && (
-          <AlbumSummary>{album.wiki.summary}</AlbumSummary>
+          <Typography
+            component="p"
+            sx={{
+              display: '-webkit-box',
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}
+          >
+            {album.wiki.summary}
+          </Typography>
         )}
 
-        <div>
+        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
           <Form action="edit">
-            <button type="submit">Edit</button>
+            <Button type="submit" variant="outlined">
+              Edit
+            </Button>
           </Form>
           <Form
             method="post"
             action="destroy"
             onSubmit={(event) => {
-              // TODO make it nicer if we use some design library
               // eslint-disable-next-line no-restricted-globals
               if (!confirm('Please confirm you want to delete this record.')) {
                 event.preventDefault()
               }
             }}
           >
-            <button type="submit">Delete</button>
+            <Button type="submit" variant="outlined" color="error">
+              Delete
+            </Button>
           </Form>
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -78,34 +107,13 @@ function Favorite({ album }: { album: Album }) {
   const { favorite } = album
   return (
     <Form method="post">
-      {/* disable because we're using a react-router-dom Form */}
-      {/* eslint-disable-next-line react/button-has-type */}
-      <button
+      <IconButton
         name="favorite"
         value={favorite ? 'false' : 'true'}
         aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
       >
-        {favorite ? '★' : '☆'}
-      </button>
+        {favorite ? <StarIcon /> : <StarBorderIcon />}
+      </IconButton>
     </Form>
   )
 }
-
-const TitleWrapper = styled(Box)`
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-`
-
-const AlbumName = styled(Typography)`
-  flex-grow: 1;
-`
-
-const AlbumSummary = styled(Typography)`
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
