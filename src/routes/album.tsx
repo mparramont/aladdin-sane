@@ -1,6 +1,7 @@
 import type { LoaderFunction, Params } from 'react-router-dom'
 import { Form, useLoaderData } from 'react-router-dom'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
+import { Box, Typography } from '@mui/material'
 import { getAlbum } from '../albums'
 import { LoaderData } from '../types/react-router-extra-types'
 
@@ -89,17 +90,18 @@ function Favorite({ album }: { album: Album }) {
     </Form>
   )
 }
-const TitleWrapper = styled.div`
+
+const TitleWrapper = styled(Box)`
   display: flex;
   justify-content: space-between;
   gap: 8px;
 `
 
-const AlbumName = styled.h1`
+const AlbumName = styled(Typography)`
   flex-grow: 1;
 `
 
-const AlbumSummary = styled.p`
+const AlbumSummary = styled(Typography)`
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;

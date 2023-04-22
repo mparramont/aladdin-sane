@@ -1,6 +1,19 @@
+import {
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
 import type { LoaderFunction } from 'react-router-dom'
-import { Link, Outlet, useLoaderData, Form } from 'react-router-dom'
-import { getAlbums, createAlbum } from '../albums'
+import { Form, Link, Outlet, useLoaderData } from 'react-router-dom'
+import { createAlbum, getAlbums } from '../albums'
 import { LoaderData } from '../types/react-router-extra-types'
 
 export const loader = (async () => {
@@ -18,47 +31,60 @@ export default function Root() {
     typeof loader
   >
   return (
-    <>
-      <div id="sidebar">
-        <h1>Celebrate David Bowie! </h1>
-        <div>
-          <form id="search-form" role="search">
-            <input
-              id="q"
-              aria-label="Search albums"
-              placeholder="Search"
-              type="search"
-              name="q"
-            />
-            <div id="search-spinner" aria-hidden hidden />
-            <div className="sr-only" aria-live="polite" />
-          </form>
-          <Form method="post">
-            <button type="submit">New</button>
-          </Form>
-        </div>
-        <nav>
-          {albums.length ? (
-            <ul>
-              {albums.map((album) => (
-                <li key={album.id}>
-                  <Link to={`albums/${album.id}`}>
-                    {album.name ? album.name : <i>No Name</i>}{' '}
-                    {album.favorite && <span>★</span>}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>
-              <i>No albums</i>
-            </p>
-          )}
-        </nav>
-      </div>
-      <div id="detail">
-        <Outlet />
-      </div>
-    </>
+    <Container maxWidth="xl">
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={4} md={3}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h4">Celebrate David Bowie!</Typography>
+            <Stack spacing={2}>
+              <form id="search-form" role="search">
+                <TextField
+                  id="q"
+                  aria-label="Search albums"
+                  placeholder="Search"
+                  type="search"
+                  name="q"
+                  fullWidth
+                />
+                <div id="search-spinner" aria-hidden hidden>
+                  <CircularProgress />
+                </div>
+                <div className="sr-only" aria-live="polite" />
+              </form>
+              <Form method="post">
+                <Button type="submit" variant="contained" color="primary">
+                  New
+                </Button>
+              </Form>
+            </Stack>
+            <nav>
+              {albums.length ? (
+                <List>
+                  {albums.map((album) => (
+                    <ListItem
+                      key={album.id}
+                      component={Link}
+                      to={`albums/${album.id}`}
+                    >
+                      <ListItemText
+                        primary={album.name ? album.name : <i>No Name</i>}
+                        secondary={album.favorite && '‚òÖ'}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Typography variant="body1">
+                  <i>No albums</i>
+                </Typography>
+              )}
+            </nav>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={8} md={9}>
+          <Outlet />
+        </Grid>
+      </Grid>
+    </Container>
   )
 }

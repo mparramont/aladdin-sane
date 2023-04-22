@@ -1,5 +1,4 @@
 import ErrorPage from './error-page'
-import './index.css'
 import Album, { loader as albumLoader } from './routes/album'
 import Root, { action as rootAction, loader as rootLoader } from './routes/root'
 
