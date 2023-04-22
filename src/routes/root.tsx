@@ -4,18 +4,16 @@ import {
   Container,
   Grid,
   List,
-  ListItem,
-  ListItemText,
   Paper,
   Stack,
   TextField,
-  Typography,
-  useTheme
+  Typography
 } from '@mui/material'
-import type { LoaderFunction } from 'react-router-dom'
-import { Form, Link, Outlet, useLoaderData } from 'react-router-dom'
 import { useEffect } from 'react'
+import type { LoaderFunction } from 'react-router-dom'
+import { Form, Outlet, useLoaderData } from 'react-router-dom'
 import { createAlbum, getAlbums } from '../albums'
+import AlbumListItem from '../components/album-list-item'
 import { LoaderData } from '../types/react-router-extra-types'
 
 export const loader = (async ({ request }) => {
@@ -31,7 +29,6 @@ export async function action() {
 }
 
 export default function Root() {
-  const theme = useTheme()
   const { albums, q }: { albums: Album[]; q: string | null } =
     useLoaderData() as LoaderData<typeof loader>
 
@@ -75,20 +72,7 @@ export default function Root() {
               {albums.length ? (
                 <List>
                   {albums.map((album) => (
-                    <ListItem
-                      key={album.id}
-                      component={Link}
-                      to={`albums/${album.id}`}
-                      sx={{
-                        textDecoration: 'none',
-                        color: theme.palette.primary.main
-                      }}
-                    >
-                      <ListItemText
-                        primary={album.name ? album.name : <i>No Name</i>}
-                        secondary={album.favorite && '‚òÖ'}
-                      />
-                    </ListItem>
+                    <AlbumListItem key={album.id} album={album} />
                   ))}
                 </List>
               ) : (
