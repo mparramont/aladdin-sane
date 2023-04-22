@@ -31,7 +31,10 @@ export default function Root() {
     typeof loader
   >
   return (
-    <Container maxWidth="xl">
+    <Container
+      maxWidth="xl"
+      sx={{ bgcolor: 'background.default', minHeight: '100vh' }}
+    >
       <Grid container spacing={3}>
         <Grid item xs={12} sm={4} md={3}>
           <Paper sx={{ p: 2 }}>
