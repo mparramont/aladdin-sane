@@ -1,21 +1,24 @@
+import StarIcon from '@mui/icons-material/Star'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
 import {
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
   Avatar,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Stack,
   Typography,
   useTheme
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 
-function AlbumListItem({ album }: { album: Album }) {
+function AlbumListItem({ album }: { album: TopAlbum }) {
   const theme = useTheme()
-  const { id, name, favorite, image, wiki } = album
-
-  // Extract the album year from the wiki.summary
-  const year = wiki?.summary.match(/\d{4}/)?.[0] || ''
+  const { id, name, favorite, image } = album
 
   const albumCover = image?.find((img) => img.size === 'small')?.['#text'] || ''
+
+  // TODO fetch the LastFMAlbum, and get the year from there (n+1 query issue though)
+  const year = name.match(/\d{4}/)?.[0] || ''
 
   return (
     <ListItem
@@ -31,14 +34,19 @@ function AlbumListItem({ album }: { album: Album }) {
       </ListItemAvatar>
       <ListItemText
         primary={
-          <>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={1}
+          >
             <Typography>{name || <i>No Name</i>}</Typography>
             <Typography variant="caption" color="text.secondary">
-              {year}
+              {favorite ? <StarIcon /> : <StarBorderIcon />}
             </Typography>
-          </>
+          </Stack>
         }
-        secondary={favorite && '‚òÖ'}
+        secondary={year}
       />
     </ListItem>
   )

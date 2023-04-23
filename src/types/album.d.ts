@@ -1,33 +1,44 @@
 interface Album extends LastFMAlbum {
   id: AlbumID
   favorite?: boolean
-  createdAt: number
+  createdAt?: number
 }
 
 type AlbumID = string
 
-interface LastFMAlbum {
-  fromLastFM: true
-  artist: Artist
-  mbid: string
+interface LastFMAlbum extends LastFMTopAlbum {
+  releasedate?: string
   tags: {
     tag: {
       url: string
       name: string
     }[]
   }
-  name: string
-  image: LastFMImage[]
   tracks: {
     track: LastFMTrack[]
   }
-  listeners: string | number
   playcount: string | number
-  url: string
   wiki?: {
     summary: string
     content: string
   }
+}
+
+// TODO very similar to Album, find a better abstraction
+interface TopAlbum extends LastFMTopAlbum {
+  id: AlbumID
+  favorite?: boolean
+  createdAt?: number
+}
+
+interface LastFMTopAlbum {
+  fromLastFM: true
+  artist: Artist
+  name: string
+  mbid: string
+  listeners: string | number
+  url: string
+  image: LastFMImage[]
 }
 
 type LastFMTrack = {

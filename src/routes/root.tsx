@@ -12,14 +12,14 @@ import {
 import { useEffect } from 'react'
 import type { LoaderFunction } from 'react-router-dom'
 import { Form, Outlet, useLoaderData } from 'react-router-dom'
-import { createAlbum, getAlbums } from '../albums'
+import { createAlbum, getTopAlbums } from '../albums'
 import AlbumListItem from '../components/album-list-item'
 import { LoaderData } from '../types/react-router-extra-types'
 
 export const loader = (async ({ request }) => {
   const url = new URL(request.url)
   const q = url.searchParams.get('q')
-  const albums = await getAlbums(q)
+  const albums = await getTopAlbums(q)
   return { albums, q }
 }) satisfies LoaderFunction
 
@@ -29,8 +29,7 @@ export async function action() {
 }
 
 export default function Root() {
-  const { albums, q }: { albums: Album[]; q: string | null } =
-    useLoaderData() as LoaderData<typeof loader>
+  const { albums, q } = useLoaderData() as LoaderData<typeof loader>
 
   useEffect(() => {
     // to fix, whenclicking back after a search, that the form field still haves the value the user entered even though the list is no longer filtered.

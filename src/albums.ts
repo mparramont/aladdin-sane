@@ -8,10 +8,10 @@ import uniqBy from 'lodash.uniqby'
 // TODO this is a hack so that we can later split on it. We should instead find a way to pass around the artist and album name separately.
 export const separatorForAlbumID = '~|~'
 
-export async function getAlbums(query?: string | null) {
+export async function getTopAlbums(query?: string | null) {
   const albums = await Promise.all([
-    getAlbumsFromLocalStorage(),
-    getAlbumsFromLastFM()
+    getTopAlbumsFromLocalStorage(),
+    getTopAlbumsFromLastFM()
   ]).then((arrays) => arrays.flat())
 
   const matchedAlbums = query
@@ -21,11 +21,11 @@ export async function getAlbums(query?: string | null) {
   return matchedAlbums.sort(sortBy('-last', 'createdAt'))
 }
 
-async function getAlbumsFromLocalStorage() {
-  return (await localforage.getItem<Album[]>('albums')) ?? []
+async function getTopAlbumsFromLocalStorage() {
+  return (await localforage.getItem<TopAlbum[]>('topAlbums')) ?? []
 }
 
-export async function getAlbumsFromLastFM() {
+export async function getTopAlbumsFromLastFM() {
   // get the top albums of David Bowie using the the Last.fm Scrobbler API
   const response = await fetch(
     'https://ws.audioscrobbler.com/2.0/' +
@@ -42,32 +42,23 @@ export async function getAlbumsFromLastFM() {
     (album: LastFMAlbum) => album.mbid || `${album.artist.name}-${album.name}`
   )
   return uniqueTopAlbums.map((album: LastFMAlbum) =>
-    buildAlbumFromLastFMAlbum(album)
+    buildTopAlbumFromLastFMTopAlbum(album)
   )
 }
 
-function buildAlbumFromLastFMAlbum(lastFMAlbum: LastFMAlbum): Album {
+function buildTopAlbumFromLastFMTopAlbum(
+  lastFMTopAlbum: LastFMTopAlbum
+): TopAlbum {
   // TODO rename this to slug
   const id = encodeURIComponent(
-    `${lastFMAlbum.artist.name}${separatorForAlbumID}${lastFMAlbum.name}`
+    `${lastFMTopAlbum.artist.name}${separatorForAlbumID}${lastFMTopAlbum.name}`
   )
   return {
     id,
     createdAt: Date.now(), // TODO fix, this will be changed on every refresh
-    ...lastFMAlbum,
+    ...lastFMTopAlbum,
     fromLastFM: true
   }
-}
-
-// TODO maybe it would make sense to differentiate between albums and albumsFromLastFM by calling Album LocalAlbum?
-export async function createAlbum() {
-  const id = Math.random().toString(36).substring(2, 9)
-  const album = { id, createdAt: Date.now() }
-  const albums = (await getAlbums()) as Album[]
-  // @ts-ignore TODO fix type when we use this
-  albums.unshift(album)
-  await set(albums)
-  return album
 }
 
 export async function getAlbum(id: string) {
@@ -75,9 +66,13 @@ export async function getAlbum(id: string) {
 }
 
 async function getAlbumFromLocalStorage(id: string) {
-  const albums = await localforage.getItem<Album[]>('albums')
+  const albums = await getAlbumsFromLocalStorage()
   const album = albums?.find((albumToFind) => albumToFind.id === id)
   return album ?? null
+}
+
+async function getAlbumsFromLocalStorage() {
+  return localforage.getItem<Album[]>('albums')
 }
 
 async function getAlbumFromLastFM(id: string) {
@@ -94,6 +89,31 @@ async function getAlbumFromLastFM(id: string) {
 
   const { album } = (await response.json()) || {}
   return album && buildAlbumFromLastFMAlbum(album)
+}
+
+// duplicated and adapted from buildTopAlbumFromLastFMTopAlbum, TODO abstract?
+function buildAlbumFromLastFMAlbum(lastFMAlbum: LastFMAlbum): TopAlbum {
+  // TODO rename this to slug
+  const id = encodeURIComponent(
+    `${lastFMAlbum.artist.name}${separatorForAlbumID}${lastFMAlbum.name}`
+  )
+  return {
+    id,
+    createdAt: Date.now(), // TODO fix, this will be changed on every refresh
+    ...lastFMAlbum,
+    fromLastFM: true
+  }
+}
+
+// TODO maybe it would make sense to differentiate between albums and albumsFromLastFM by calling Album LocalAlbum?
+export async function createAlbum() {
+  const id = Math.random().toString(36).substring(2, 9)
+  const album = { id, createdAt: Date.now() }
+  const albums = (await getAlbumsFromLocalStorage()) as Album[]
+  // @ts-ignore TODO fix type when we use this
+  albums.unshift(album)
+  await set(albums)
+  return album
 }
 
 export async function updateAlbum(id: string, updates: Partial<Album>) {
