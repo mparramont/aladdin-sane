@@ -2,14 +2,18 @@ import {
   AppBar,
   CircularProgress,
   Container,
+  FormControl,
   Grid,
+  InputLabel,
   List,
+  MenuItem,
   Paper,
+  Select,
   TextField,
   Toolbar,
   Typography
 } from '@mui/material'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { LoaderFunction } from 'react-router-dom'
 import { Form, Outlet, useLoaderData } from 'react-router-dom'
 import { createAlbum, getTopAlbums } from '../albums'
@@ -28,14 +32,37 @@ export async function action() {
   return { album }
 }
 
+const sortTypes = ['popularity', 'name', 'year']
+type SortType = (typeof sortTypes)[number]
+
 export default function Root() {
   const { albums, q } = useLoaderData() as LoaderData<typeof loader>
+  const [sortOrder, setSortOrder] = useState<SortType>('popularity')
 
   useEffect(() => {
-    // to fix when clicking back after a search, that the form field still has the value the user entered even though the list is no longer filtered.
     // @ts-ignore TODO fix
     document.getElementById('q').value = q
   }, [q])
+
+  const handleSortOrderChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    setSortOrder(event.target.value as string)
+  }
+
+  const getSortedAlbums = () => {
+    if (sortOrder === 'popularity') return albums // default order, popularity
+    return [...albums].sort((a, b) => {
+      if (sortOrder === 'year') {
+        if (a.year === null) return 1
+        if (b.year === null) return -1
+        return b.year - a.year
+      }
+      return a.name.localeCompare(b.name) // sort by name
+    })
+  }
+  const sortedAlbums = getSortedAlbums()
+
   return (
     <Container
       maxWidth="xl"
@@ -49,7 +76,6 @@ export default function Root() {
       <Grid container spacing={4}>
         <Grid item xs={12} sm={4} md={3}>
           <Paper sx={{ p: 2, my: 2 }}>
-            {/* <Stack spacing={2}> */}
             <Form id="search-form" role="search">
               <TextField
                 id="q"
@@ -64,17 +90,26 @@ export default function Root() {
                 <CircularProgress />
               </div>
               <div className="sr-only" aria-live="polite" />
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel htmlFor="sort-order">Sort by</InputLabel>
+                <Select
+                  id="sort-order"
+                  value={sortOrder}
+                  // @ts-ignore TODO fix, complicated one
+                  onChange={handleSortOrderChange}
+                >
+                  {sortTypes.map((sortType) => (
+                    <MenuItem key={sortType} value={sortType}>
+                      {sortType}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Form>
-            {/* <Form method="post">
-                <Button type="submit" variant="contained" color="primary">
-                  New
-                </Button>
-              </Form>
-            </Stack> */}
             <nav>
-              {albums.length ? (
+              {sortedAlbums.length ? (
                 <List>
-                  {albums.map((album) => (
+                  {sortedAlbums.map((album) => (
                     <AlbumListItem key={album.id} album={album} />
                   ))}
                 </List>

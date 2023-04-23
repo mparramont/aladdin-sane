@@ -53,10 +53,15 @@ function buildTopAlbumFromLastFMTopAlbum(
   const id = encodeURIComponent(
     `${lastFMTopAlbum.artist.name}${separatorForAlbumID}${lastFMTopAlbum.name}`
   )
+  // HACK this only works for albums with year in their name
+  // TODO fetch the LastFMAlbum, and get the year from there (n+1 query issue though)
+  const possibleYearFromName = lastFMTopAlbum.name.match(/\d{4}/)?.[0]
+  const year = possibleYearFromName ? parseInt(possibleYearFromName, 10) : null
   return {
     id,
     createdAt: Date.now(), // TODO fix, this will be changed on every refresh
     ...lastFMTopAlbum,
+    year,
     fromLastFM: true
   }
 }

@@ -35,6 +35,7 @@ interface LastFMTopAlbum {
   fromLastFM: true
   artist: Artist
   name: string
+  year: number | null
   mbid: string
   listeners: string | number
   url: string

@@ -13,12 +13,9 @@ import { Link } from 'react-router-dom'
 
 function AlbumListItem({ album }: { album: TopAlbum }) {
   const theme = useTheme()
-  const { id, name, favorite, image } = album
+  const { id, name, favorite, image, year } = album
 
   const albumCover = image?.find((img) => img.size === 'small')?.['#text'] || ''
-
-  // TODO fetch the LastFMAlbum, and get the year from there (n+1 query issue though)
-  const year = name.match(/\d{4}/)?.[0] || ''
 
   return (
     <ListItem
