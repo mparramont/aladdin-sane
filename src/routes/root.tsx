@@ -1,12 +1,12 @@
 import {
-  Button,
+  AppBar,
   CircularProgress,
   Container,
   Grid,
   List,
   Paper,
-  Stack,
   TextField,
+  Toolbar,
   Typography
 } from '@mui/material'
 import { useEffect } from 'react'
@@ -32,7 +32,7 @@ export default function Root() {
   const { albums, q } = useLoaderData() as LoaderData<typeof loader>
 
   useEffect(() => {
-    // to fix, whenclicking back after a search, that the form field still haves the value the user entered even though the list is no longer filtered.
+    // to fix when clicking back after a search, that the form field still has the value the user entered even though the list is no longer filtered.
     // @ts-ignore TODO fix
     document.getElementById('q').value = q
   }, [q])
@@ -41,32 +41,36 @@ export default function Root() {
       maxWidth="xl"
       sx={{ bgcolor: 'background.default', minHeight: '100vh' }}
     >
-      <Grid container spacing={3}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6">Celebrate David Bowie!</Typography>
+        </Toolbar>
+      </AppBar>
+      <Grid container spacing={4}>
         <Grid item xs={12} sm={4} md={3}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h4">Celebrate David Bowie!</Typography>
-            <Stack spacing={2}>
-              <Form id="search-form" role="search">
-                <TextField
-                  id="q"
-                  aria-label="Search albums"
-                  placeholder="Search"
-                  type="search"
-                  name="q"
-                  defaultValue={q}
-                  fullWidth
-                />
-                <div id="search-spinner" aria-hidden hidden>
-                  <CircularProgress />
-                </div>
-                <div className="sr-only" aria-live="polite" />
-              </Form>
-              <Form method="post">
+          <Paper sx={{ p: 2, my: 2 }}>
+            {/* <Stack spacing={2}> */}
+            <Form id="search-form" role="search">
+              <TextField
+                id="q"
+                aria-label="Search albums"
+                placeholder="Search"
+                type="search"
+                name="q"
+                defaultValue={q}
+                fullWidth
+              />
+              <div id="search-spinner" aria-hidden hidden>
+                <CircularProgress />
+              </div>
+              <div className="sr-only" aria-live="polite" />
+            </Form>
+            {/* <Form method="post">
                 <Button type="submit" variant="contained" color="primary">
                   New
                 </Button>
               </Form>
-            </Stack>
+            </Stack> */}
             <nav>
               {albums.length ? (
                 <List>
@@ -82,10 +86,8 @@ export default function Root() {
             </nav>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={8} md={9}>
-          <Container>
-            <Outlet />
-          </Container>
+        <Grid item xs={12} sm={8} md={9} sx={{ my: 2 }}>
+          <Outlet />
         </Grid>
       </Grid>
     </Container>
